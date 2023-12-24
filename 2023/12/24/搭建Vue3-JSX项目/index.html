@@ -1,0 +1,231 @@
+
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="theme-color" content="#202020"/>
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  
+    <meta name="keywords" content="Vue," />
+  
+
+  
+    <meta name="description" content="搭建Vue3+JSX项目" />
+  
+  
+  <link rel="icon" type="image/x-icon" href="/logo.png">
+  <title>搭建Vue3+JSX项目u1in</title>
+  
+    <!-- stylesheets list from config.yml -->
+    
+      <link rel="stylesheet" href="//cdn.bootcss.com/pure/1.0.0/pure-min.css">
+    
+      <link rel="stylesheet" href="/css/microb.css">
+    
+  
+<meta name="generator" content="Hexo 7.0.0"></head>
+
+<body>
+  <nav class="home-menu pure-menu pure-menu-horizontal pure-menu-fixed">
+  <ul class="pure-menu-list float-r clearfix">
+    
+      <li class="pure-menu-item toc-menu">
+        <a id="menu-main-post" class="pure-menu-link" href="javascript:;">
+          <img class="menu-icon" src="/logo.png" alt="MENU">
+        </a>
+      </li>
+    
+  </ul>  
+  <a class="pure-menu-heading" href="/">
+      <h1 class="title">u1in</h1>
+      <!-- <span></span> -->
+  </a>
+  <!-- 
+  <img class="logo" id="logo" src="/logo.png" alt="logo">
+   -->
+</nav>
+
+  <div class="container" id="content-outer">
+    <div class="inner" id="content-inner">
+      <article class="post" id="post">
+  <header class="post-header text-center">
+    <h1 class="title">
+      搭建Vue3+JSX项目
+    </h1>
+    
+    <time class="time" datetime="2023-12-24T08:23:05.000Z">
+      2023-12-24
+    </time>
+    
+    <hr>
+  </header>
+  <div class="post-content">
+    <h1 id="搭建-Vue3-JSX-函数式组件开发"><a href="#搭建-Vue3-JSX-函数式组件开发" class="headerlink" title="搭建 Vue3 + JSX + 函数式组件开发"></a>搭建 Vue3 + JSX + 函数式组件开发</h1><blockquote>
+<p>一种更加方便的组件开发方式</p>
+</blockquote>
+<h2 id="0-配置-Vite-对-JSX-的支持"><a href="#0-配置-Vite-对-JSX-的支持" class="headerlink" title="0.配置 Vite 对 JSX 的支持"></a>0.配置 Vite 对 JSX 的支持</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">npm create vite@latest</span><br><span class="line"><span class="built_in">cd</span> vite-project</span><br><span class="line">npm install</span><br></pre></td></tr></table></figure>
+
+<p>将项目跑起来之后进入项目中配置 vite 对于 jsx 的支持，根据<a target="_blank" rel="noopener" href="https://cn.vitejs.dev/guide/features.html#jsx">官方文档</a>的说明，下载<a target="_blank" rel="noopener" href="https://github.com/vitejs/vite-plugin-vue/tree/main/packages/plugin-vue-jsx">@vitejs&#x2F;plugin-vue-jsx</a>插件。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install --save-dev @vitejs/plugin-vue-jsx</span><br></pre></td></tr></table></figure>
+
+<p>打开项目根目录下的 vite.config.js，引入并使用组件</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; defineConfig &#125; <span class="keyword">from</span> <span class="string">&quot;vite&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> vue <span class="keyword">from</span> <span class="string">&quot;@vitejs/plugin-vue&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> vueJsx <span class="keyword">from</span> <span class="string">&quot;@vitejs/plugin-vue-jsx&quot;</span>; <span class="comment">// 引入插件</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// https://vitejs.dev/config/</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="title function_">defineConfig</span>(&#123;</span><br><span class="line">  <span class="attr">plugins</span>: [<span class="title function_">vue</span>(), <span class="title function_">vueJsx</span>()], <span class="comment">// 使用插件</span></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>至此项目配置 JSX 支持完毕。</p>
+<h2 id="1-调整开发方式"><a href="#1-调整开发方式" class="headerlink" title="1.调整开发方式"></a>1.调整开发方式</h2><h3 id="1-1-调整-SFC-为-JSX"><a href="#1-1-调整-SFC-为-JSX" class="headerlink" title="1.1 调整 SFC 为 JSX"></a>1.1 调整 SFC 为 JSX</h3><p>配置了 JSX 之后，我们编写组件不再使用.vue 结尾，即不再编写 SFC 组件。以下是一个 Vue3 函数式组件的示例</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* App.jsx */</span></span><br><span class="line"><span class="keyword">import</span> &#123; defineComponent &#125; <span class="keyword">from</span> <span class="string">&quot;vue&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="title class_">App</span> = <span class="title function_">defineComponent</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="function">() =&gt;</span> <span class="language-xml"><span class="tag">&lt;<span class="name">div</span>&gt;</span>App<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span>;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="title class_">App</span>;</span><br></pre></td></tr></table></figure>
+
+<p>其中 defineComponent 接受一个函数作为组件初始化函数，具体详看文档<a target="_blank" rel="noopener" href="https://cn.vuejs.org/api/general.html#function-signature">defineComponent</a>。</p>
+<h3 id="1-2-调整-css-的引入方式"><a href="#1-2-调整-css-的引入方式" class="headerlink" title="1.2 调整 css 的引入方式"></a>1.2 调整 css 的引入方式</h3><p>原来在 SFC 中，项目的样式文件仅需写在 SFC 的 style 标签中即可。但是在 JSX 中，样式文件作为独立的文件，可以 import 到任何组件中，即以下面的方式引入样式文件</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* App.css */</span></span><br><span class="line"><span class="selector-class">.container</span> &#123;</span><br><span class="line">  <span class="attribute">color</span>: <span class="built_in">rgba</span>(<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0.6</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* App.jsx */</span></span><br><span class="line"><span class="keyword">import</span> &#123; defineComponent &#125; <span class="keyword">from</span> <span class="string">&quot;vue&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;./App.css&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="title class_">App</span> = <span class="title function_">defineComponent</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="function">() =&gt;</span> <span class="language-xml"><span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;container&quot;</span>&gt;</span>App<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span>;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="title class_">App</span>;</span><br></pre></td></tr></table></figure>
+
+<p>但是上述的使用方式，App.css 中的样式是影响全局的，我们需要配置 CSS Module 实现 SFC 中的 scoped，让组件样式的影响范围保持在组件中。</p>
+<p>在配置 CSS Modules 之前，我们先引入 less，让 css 编写更加方便。</p>
+<h3 id="1-3-引入-less"><a href="#1-3-引入-less" class="headerlink" title="1.3 引入 less"></a>1.3 引入 less</h3><p>在 vite 中，仅需安装 less 依赖即可添加 less 支持</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install --save-dev less</span><br></pre></td></tr></table></figure>
+
+<p>然后把.css 后缀改为.less 即可</p>
+<figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* App.less */</span></span><br><span class="line"><span class="selector-class">.container</span> &#123;</span><br><span class="line">  <span class="attribute">color</span>: <span class="built_in">rgba</span>(<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0.6</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="selector-class">.red</span> &#123;</span><br><span class="line">  <span class="attribute">color</span>: red <span class="meta">!important</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* App.jsx */</span></span><br><span class="line"><span class="keyword">import</span> &#123; defineComponent &#125; <span class="keyword">from</span> <span class="string">&quot;vue&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;./App.less&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="title class_">App</span> = <span class="title function_">defineComponent</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="function">() =&gt;</span> <span class="language-xml"><span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;container&quot;</span>&gt;</span>App<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span>;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="title class_">App</span>;</span><br></pre></td></tr></table></figure>
+
+<h3 id="1-4-调整-less-的引入方式"><a href="#1-4-调整-less-的引入方式" class="headerlink" title="1.4 调整 less 的引入方式"></a>1.4 调整 less 的引入方式</h3><p>在 vite 中，*.module.less 命名的 less 文件，vite 会对其进行 CSS Module 处理，导出一个 JS 对象，对象的 key 为 css 样式类名，对象的 value 为 css module 后的样式类名。即组件调整为以下写法。</p>
+<figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* App.module.less */</span></span><br><span class="line"><span class="selector-class">.container</span> &#123;</span><br><span class="line">  <span class="attribute">color</span>: <span class="built_in">rgba</span>(<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0.6</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="selector-class">.red</span> &#123;</span><br><span class="line">  <span class="attribute">color</span>: red <span class="meta">!important</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* App.jsx */</span></span><br><span class="line"><span class="keyword">import</span> &#123; defineComponent &#125; <span class="keyword">from</span> <span class="string">&quot;vue&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> styles <span class="keyword">from</span> <span class="string">&quot;./App.module.less&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">  styles的值为（不固定）</span></span><br><span class="line"><span class="comment">  &#123;&quot;container&quot;:&quot;_container_xpseh_1&quot;,&quot;red&quot;:&quot;_red_xpseh_4&quot;&#125;</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="title class_">App</span> = <span class="title function_">defineComponent</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">  <span class="comment">/* 下面的JSX将会被渲染成如下dom  */</span></span><br><span class="line">  <span class="comment">/* &lt;div class=&quot;_container_xpseh_1&quot;&gt;App&lt;/div&gt;  */</span></span><br><span class="line">  <span class="keyword">return</span> <span class="function">() =&gt;</span> <span class="language-xml"><span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&#123;styles.container&#125;</span>&gt;</span>App<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span>;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="title class_">App</span>;</span><br></pre></td></tr></table></figure>
+
+<p>通过生成添加哈希的类名，保证了每个组件引用的样式都是独一无二的，避免了全局污染。</p>
+<h3 id="1-5-插槽"><a href="#1-5-插槽" class="headerlink" title="1.5 插槽"></a>1.5 插槽</h3><p>使用 JSX 后插槽和编写如下</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// App.jsx</span></span><br><span class="line"><span class="keyword">import</span> &#123; defineComponent &#125; <span class="keyword">from</span> <span class="string">&quot;vue&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> <span class="title class_">Foo</span> <span class="keyword">from</span> <span class="string">&quot;./Foo&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="title class_">App</span> = <span class="title function_">defineComponent</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="function">() =&gt;</span> (</span><br><span class="line">    <span class="language-xml"><span class="tag">&lt;<span class="name">Foo</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">      &#123;&#123;</span></span><br><span class="line"><span class="language-xml">        default: () =&gt; <span class="tag">&lt;<span class="name">div</span>&gt;</span>默认插槽<span class="tag">&lt;/<span class="name">div</span>&gt;</span>,</span></span><br><span class="line"><span class="language-xml">        name: () =&gt; <span class="tag">&lt;<span class="name">div</span>&gt;</span>具名插槽<span class="tag">&lt;/<span class="name">div</span>&gt;</span>,</span></span><br><span class="line"><span class="language-xml">      &#125;&#125;</span></span><br><span class="line"><span class="language-xml">    <span class="tag">&lt;/<span class="name">Foo</span>&gt;</span></span></span><br><span class="line">  );</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="title class_">App</span>;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Foo.jsx</span></span><br><span class="line"><span class="keyword">import</span> &#123; defineComponent &#125; <span class="keyword">from</span> <span class="string">&quot;vue&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="title class_">Foo</span> = <span class="title function_">defineComponent</span>(<span class="function">(<span class="params">props, context</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="function">() =&gt;</span> (</span><br><span class="line">    <span class="language-xml"><span class="tag">&lt;<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">      <span class="tag">&lt;<span class="name">div</span>&gt;</span>Default Slot &#123;context.slots.default()&#125;<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">      <span class="tag">&lt;<span class="name">div</span>&gt;</span>Name Slot &#123;context.slots.name()&#125;<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line">  );</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="title class_">Foo</span>;</span><br></pre></td></tr></table></figure>
+
+<p>在 Foo 组件中编写体验还好，但是在 App 组件中，插槽的使用方式不如 React 中的方便</p>
+<h3 id="1-6-HOC"><a href="#1-6-HOC" class="headerlink" title="1.6 HOC"></a>1.6 HOC</h3><p>现在我们可以编写 HOC 了，代码示例如下</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// App.jsx</span></span><br><span class="line"><span class="keyword">import</span> &#123; defineComponent &#125; <span class="keyword">from</span> <span class="string">&quot;vue&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> <span class="title class_">Foo</span> <span class="keyword">from</span> <span class="string">&quot;./Foo&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="title class_">App</span> = <span class="title function_">defineComponent</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="function">() =&gt;</span> <span class="language-xml"><span class="tag">&lt;<span class="name">Foo</span> <span class="attr">msg</span>=<span class="string">&quot;msg&quot;</span> <span class="attr">msg2</span>=<span class="string">&quot;msg2&quot;</span> /&gt;</span></span>;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="title class_">App</span>;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Foo.jsx</span></span><br><span class="line"><span class="keyword">import</span> &#123; defineComponent &#125; <span class="keyword">from</span> <span class="string">&quot;vue&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> <span class="variable constant_">HOC</span> <span class="keyword">from</span> <span class="string">&quot;./HOC&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="title class_">Foo</span> = <span class="title function_">defineComponent</span>(</span><br><span class="line">  <span class="function">(<span class="params">props</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="function">() =&gt;</span> (</span><br><span class="line">      <span class="language-xml"><span class="tag">&lt;<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">        <span class="tag">&lt;<span class="name">div</span>&gt;</span>&#123;props.msg&#125;<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">        <span class="tag">&lt;<span class="name">div</span>&gt;</span>&#123;props.msg2&#125;<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">      <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line">    );</span><br><span class="line">  &#125;,</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="attr">props</span>: &#123;</span><br><span class="line">      <span class="attr">msg</span>: <span class="title class_">String</span>,</span><br><span class="line">      <span class="attr">msg2</span>: <span class="title class_">String</span>,</span><br><span class="line">    &#125;,</span><br><span class="line">  &#125;</span><br><span class="line">);</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="title function_">HOC</span>(<span class="title class_">Foo</span>);</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// HOC.js</span></span><br><span class="line"><span class="keyword">import</span> &#123; defineComponent, h, useAttrs &#125; <span class="keyword">from</span> <span class="string">&quot;vue&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="title function_">HOC</span> = (<span class="params">Element</span>) =&gt; &#123;</span><br><span class="line">  <span class="keyword">const</span> <span class="title class_">Wrapper</span> = <span class="title function_">defineComponent</span>(<span class="function">(<span class="params">props</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">const</span> attrs = <span class="title function_">useAttrs</span>();</span><br><span class="line">    <span class="keyword">return</span> <span class="function">() =&gt;</span></span><br><span class="line">      <span class="title function_">h</span>(<span class="title class_">Element</span>, &#123;</span><br><span class="line">        ...attrs,</span><br><span class="line">        <span class="attr">msg</span>: <span class="string">&quot;劫持msg&quot;</span>,</span><br><span class="line">      &#125;);</span><br><span class="line">  &#125;);</span><br><span class="line">  <span class="comment">// 【关键】设置不允许继承，不然props还是会挂到劫持组件的attr中</span></span><br><span class="line">  <span class="title class_">Wrapper</span>.<span class="property">inheritAttrs</span> = <span class="literal">false</span>;</span><br><span class="line">  <span class="keyword">return</span> <span class="title class_">Wrapper</span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="variable constant_">HOC</span>;</span><br></pre></td></tr></table></figure>
+
+<p>如上，我在 APP 组件中引入 Foo 组件，Foo 组件受到 HOC.js 的劫持，其中 props 中的 msg 会被篡改成”劫持 msg”。<br>HOC可以实现很多功能，在开发中很方便。</p>
+<h2 id="2-函数式组件"><a href="#2-函数式组件" class="headerlink" title="2 函数式组件"></a>2 函数式组件</h2><p>函数式组件就是使用函数编写的一种组件，组件由一个函数构成，接收 props，返回 vnode。在 React 中通过 React Hook 可以编写出很多功能强大的组件。<strong>但是在 Vue 中，函数式组件没有生命周期，无法使用 Vue 的 Hooks。</strong></p>
+<p>以下是一个函数式组件的例子</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// App.jsx</span></span><br><span class="line"><span class="keyword">const</span> <span class="title function_">App</span> = (<span class="params"></span>) =&gt; <span class="language-xml"><span class="tag">&lt;<span class="name">div</span>&gt;</span>App<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="title class_">App</span>;</span><br></pre></td></tr></table></figure>
+
+<p>仅仅编写一个函数，就能成为一个组件。</p>
+<p>但如果是 React 的话，可以添加 Hook 在不同的时机触发不同的钩子，代码如下</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// App.jsx</span></span><br><span class="line"><span class="keyword">import</span> <span class="title class_">React</span>, &#123; useEffect &#125; <span class="keyword">from</span> <span class="string">&quot;react&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="title function_">App</span> = (<span class="params"></span>) =&gt; &#123;</span><br><span class="line">  <span class="title function_">useEffect</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">    consol.<span class="title function_">log</span>(<span class="string">&quot;load&quot;</span>);</span><br><span class="line">  &#125;, []);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="language-xml"><span class="tag">&lt;<span class="name">div</span>&gt;</span>App<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="title class_">App</span>;</span><br></pre></td></tr></table></figure>
+
+<p>但是在 Vue 中，函数式组件不具备任何生命周期，无法使用 Hooks，如果想实现上述方式，得在 setup 中注册钩子，代码如下</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// App.jsx</span></span><br><span class="line"><span class="keyword">import</span> &#123; defineComponent, onMounted &#125; <span class="keyword">from</span> <span class="string">&quot;vue&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="title class_">App</span> = <span class="title function_">defineComponent</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">  <span class="title function_">onMounted</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;load&quot;</span>);</span><br><span class="line">  &#125;);</span><br><span class="line">  <span class="keyword">return</span> <span class="function">() =&gt;</span> <span class="language-xml"><span class="tag">&lt;<span class="name">div</span>&gt;</span>App<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span>;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="title class_">App</span>;</span><br></pre></td></tr></table></figure>
+
+<h2 id="3-JSX-的父子通讯方式"><a href="#3-JSX-的父子通讯方式" class="headerlink" title="3. JSX 的父子通讯方式"></a>3. JSX 的父子通讯方式</h2><p>在 SFC 中，父子之间的通讯方式主要是父组件传递 props 给子组件，子组件 emit 事件给父组件的方式进行通讯。<br>但是在 JSX 中，有一种 JSX 特色的通讯方式，这一点在 React 中经常使用</p>
+<p>下面编写两个组件 Foo 和 Bar，通过点击 Bar 接受父组件的传参，并能通知父组件更变自身状态</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Foo.jsx</span></span><br><span class="line"><span class="keyword">import</span> &#123; defineComponent, ref &#125; <span class="keyword">from</span> <span class="string">&quot;vue&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> <span class="title class_">Bar</span> <span class="keyword">from</span> <span class="string">&quot;./Bar&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="title class_">Foo</span> = <span class="title function_">defineComponent</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">const</span> fooText = <span class="title function_">ref</span>(<span class="string">&quot;Foo&quot;</span>);</span><br><span class="line">  <span class="keyword">const</span> barText = <span class="title function_">ref</span>(<span class="string">&quot;Bar&quot;</span>);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="function">() =&gt;</span> (</span><br><span class="line">    <span class="language-xml"><span class="tag">&lt;<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">      &#123;fooText.value&#125;</span></span><br><span class="line"><span class="language-xml">      <span class="tag">&lt;<span class="name">Bar</span></span></span></span><br><span class="line"><span class="tag"><span class="language-xml">        <span class="attr">text</span>=<span class="string">&#123;barText.value&#125;</span></span></span></span><br><span class="line"><span class="tag"><span class="language-xml">        <span class="attr">textClick</span>=<span class="string">&#123;()</span> =&gt;</span> &#123;</span></span><br><span class="line"><span class="language-xml">          fooText.value = barText.value;</span></span><br><span class="line"><span class="language-xml">        &#125;&#125;</span></span><br><span class="line"><span class="language-xml">      /&gt;</span></span><br><span class="line"><span class="language-xml">    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line">  );</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="title class_">Foo</span>;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Bar.jsx</span></span><br><span class="line"><span class="keyword">import</span> &#123; defineComponent &#125; <span class="keyword">from</span> <span class="string">&quot;vue&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="title class_">Bar</span> = <span class="title function_">defineComponent</span>(</span><br><span class="line">  <span class="function">(<span class="params">props</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="function">() =&gt;</span> <span class="language-xml"><span class="tag">&lt;<span class="name">div</span> <span class="attr">onClick</span>=<span class="string">&#123;props.textClick&#125;</span>&gt;</span>&#123;props.text&#125;<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span>;</span><br><span class="line">  &#125;,</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="attr">props</span>: &#123;</span><br><span class="line">      <span class="attr">text</span>: <span class="title class_">String</span>,</span><br><span class="line">      <span class="attr">textClick</span>: <span class="title class_">Function</span>,</span><br><span class="line">    &#125;,</span><br><span class="line">  &#125;</span><br><span class="line">);</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="title class_">Bar</span>;</span><br></pre></td></tr></table></figure>
+
+<p>以上组件中，点击 Bar 中的文字，会改变 Foo 中的状态。<br>JSX 中其实不存在子传父，JSX 中更像子组件永远接受参数，只负责展示或者调用 props 中的数据或者函数，自己没有<strong>传递</strong>出去什么，自己只是调用了一个具有父元素作用域的函数而已。</p>
+<h2 id="4-结束语"><a href="#4-结束语" class="headerlink" title="4. 结束语"></a>4. 结束语</h2><p>尽管 Vue 没有像 React 那样那么方便的使用 JSX，但是也在支持 JSX 的道路上走了很好的一步，而且相比 React Vue 对函数组件有着自己独特的 Hook 优势，使用函数组件能更方便的设计组件，以此记录。</p>
+
+
+    <!-- 显示photos -->
+    
+
+  </div>
+  <div class="post-tags">
+    <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Vue/" rel="tag">Vue</a></li></ul>
+  </div>
+</article>
+  
+
+
+  <div id="toc" class="toc-article">
+    <strong class="toc-title">目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%90%AD%E5%BB%BA-Vue3-JSX-%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BB%84%E4%BB%B6%E5%BC%80%E5%8F%91"><span class="toc-text">搭建 Vue3 + JSX + 函数式组件开发</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0-%E9%85%8D%E7%BD%AE-Vite-%E5%AF%B9-JSX-%E7%9A%84%E6%94%AF%E6%8C%81"><span class="toc-text">0.配置 Vite 对 JSX 的支持</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E8%B0%83%E6%95%B4%E5%BC%80%E5%8F%91%E6%96%B9%E5%BC%8F"><span class="toc-text">1.调整开发方式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1-%E8%B0%83%E6%95%B4-SFC-%E4%B8%BA-JSX"><span class="toc-text">1.1 调整 SFC 为 JSX</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2-%E8%B0%83%E6%95%B4-css-%E7%9A%84%E5%BC%95%E5%85%A5%E6%96%B9%E5%BC%8F"><span class="toc-text">1.2 调整 css 的引入方式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-3-%E5%BC%95%E5%85%A5-less"><span class="toc-text">1.3 引入 less</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-4-%E8%B0%83%E6%95%B4-less-%E7%9A%84%E5%BC%95%E5%85%A5%E6%96%B9%E5%BC%8F"><span class="toc-text">1.4 调整 less 的引入方式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-5-%E6%8F%92%E6%A7%BD"><span class="toc-text">1.5 插槽</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-6-HOC"><span class="toc-text">1.6 HOC</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BB%84%E4%BB%B6"><span class="toc-text">2 函数式组件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-JSX-%E7%9A%84%E7%88%B6%E5%AD%90%E9%80%9A%E8%AE%AF%E6%96%B9%E5%BC%8F"><span class="toc-text">3. JSX 的父子通讯方式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E7%BB%93%E6%9D%9F%E8%AF%AD"><span class="toc-text">4. 结束语</span></a></li></ol></li></ol>
+  </div>
+
+
+    </div>
+
+    
+
+  </div>
+
+  <footer class="footer text-center">
+    <div id="bottom-inner">
+      
+        <a href="http://hexo.io" target="_blank" class="footer-link">Hexo</a>
+      
+        <a href="https://github.com/microacup/hexo-theme-micorb" target="_blank" class="footer-link">Theme microb</a>
+      
+    </div>
+  </footer>
+   <script>
+  (function (window, document) {
+    window.requestAnimationFrame = (function () {
+      return window.requestAnimationFrame ||
+        window.webkitRequestAnimationFrame ||
+        window.mozRequestAnimationFrame ||
+        window.oRequestAnimationFrame ||
+        window.msRequestAnimationFrame ||
+        function (callback) {
+          setTimeout(callback, 1000 / 60);
+        }
+    })();
+
+    function init() {
+      addMenuEvent();
+    }
+    init();
+
+    function addMenuEvent() {
+      var menu = document.getElementById('menu-main-post');
+      if (menu) {
+        var toc = document.getElementById('toc');
+        menu.title = toc ? '目录' : '回到顶部';
+        menu.onclick = function () {
+          if (toc) {
+            if (toc.style.display == 'block') {
+              toc.style.display = 'none';
+            } else {
+              toc.style.display = 'block';
+            }
+          } else {
+            returnTop();
+          }
+        };
+      }
+    }
+
+    var timer = null;
+
+    function returnTop() {
+      cancelAnimationFrame(timer);
+      timer = requestAnimationFrame(function fn() {
+        var oTop = document.body.scrollTop || document.documentElement.scrollTop;
+        if (oTop > 0) {
+          document.body.scrollTop = document.documentElement.scrollTop = oTop - 50;
+          timer = requestAnimationFrame(fn);
+        } else {
+          cancelAnimationFrame(timer);
+        }
+      });
+    }
+
+  })(window, document);
+</script> 
+
+  
+
+
+
+</body>
+</html>
