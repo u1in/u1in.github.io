@@ -1,0 +1,193 @@
+
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="theme-color" content="#202020"/>
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  
+    <meta name="keywords" content="Vue,Vite," />
+  
+
+  
+    <meta name="description" content="Vite的多页配置、降级配置、单文件配置" />
+  
+  
+  <link rel="icon" type="image/x-icon" href="/logo.png">
+  <title>Vite的多页配置、降级配置、单文件配置u1in</title>
+  
+    <!-- stylesheets list from config.yml -->
+    
+      <link rel="stylesheet" href="//cdn.bootcss.com/pure/1.0.0/pure-min.css">
+    
+      <link rel="stylesheet" href="/css/microb.css">
+    
+  
+<meta name="generator" content="Hexo 7.0.0"></head>
+
+<body>
+  <nav class="home-menu pure-menu pure-menu-horizontal pure-menu-fixed">
+  <ul class="pure-menu-list float-r clearfix">
+    
+      <li class="pure-menu-item toc-menu">
+        <a id="menu-main-post" class="pure-menu-link" href="javascript:;">
+          <img class="menu-icon" src="/logo.png" alt="MENU">
+        </a>
+      </li>
+    
+  </ul>  
+  <a class="pure-menu-heading" href="/">
+      <h1 class="title">u1in</h1>
+      <!-- <span></span> -->
+  </a>
+  <!-- 
+  <img class="logo" id="logo" src="/logo.png" alt="logo">
+   -->
+</nav>
+
+  <div class="container" id="content-outer">
+    <div class="inner" id="content-inner">
+      <article class="post" id="post">
+  <header class="post-header text-center">
+    <h1 class="title">
+      Vite的多页配置、降级配置、单文件配置
+    </h1>
+    
+    <time class="time" datetime="2023-12-30T10:25:27.000Z">
+      2023-12-30
+    </time>
+    
+    <hr>
+  </header>
+  <div class="post-content">
+    <h1 id="Vite-多页配置"><a href="#Vite-多页配置" class="headerlink" title="Vite 多页配置"></a>Vite 多页配置</h1><p>使用<a target="_blank" rel="noopener" href="https://www.npmjs.com/package/vite-plugin-html">vite-plugin-html</a>接管 html 的配置，完成开发模式下的 html 页面生成，以及生产模式下的多页打包。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm i -D vite-plugin-html</span><br></pre></td></tr></table></figure>
+
+<p>然后配置 vite.config.js</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; defineConfig &#125; <span class="keyword">from</span> <span class="string">&quot;vite&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> vue <span class="keyword">from</span> <span class="string">&quot;@vitejs/plugin-vue&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; createHtmlPlugin &#125; <span class="keyword">from</span> <span class="string">&quot;vite-plugin-html&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// https://vitejs.dev/config/</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="title function_">defineConfig</span>(&#123;</span><br><span class="line">  <span class="attr">base</span>: <span class="string">&quot;./&quot;</span>, <span class="comment">// 必须，插件生成出来的js引用使用绝对路径，不配置base会出错</span></span><br><span class="line">  <span class="attr">rollupOptions</span>: &#123;</span><br><span class="line">    <span class="comment">// 定义多页打包</span></span><br><span class="line">    <span class="attr">input</span>: &#123;</span><br><span class="line">      <span class="attr">index1</span>: <span class="string">&quot;src/page1/main.js&quot;</span>,</span><br><span class="line">      <span class="attr">index2</span>: <span class="string">&quot;src/page2/main.js&quot;</span>,</span><br><span class="line">    &#125;,</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">plugins</span>: [</span><br><span class="line">    <span class="title function_">vue</span>(),</span><br><span class="line">    <span class="title function_">createHtmlPlugin</span>(&#123;</span><br><span class="line">      <span class="attr">minify</span>: <span class="literal">true</span>,</span><br><span class="line">      <span class="attr">viteNext</span>: <span class="literal">true</span>, <span class="comment">// vite5.0.0以上版本需要开启</span></span><br><span class="line">      <span class="attr">pages</span>: [</span><br><span class="line">        &#123;</span><br><span class="line">          <span class="attr">entry</span>: <span class="string">&quot;/src/page1/main.js&quot;</span>, <span class="comment">// 配置入口文件</span></span><br><span class="line">          <span class="attr">filename</span>: <span class="string">&quot;index.html&quot;</span>, <span class="comment">// 配置打包出来的html文件名称</span></span><br><span class="line">          <span class="attr">template</span>: <span class="string">&quot;index.html&quot;</span>, <span class="comment">// 指定模板</span></span><br><span class="line">        &#125;,</span><br><span class="line">        &#123;</span><br><span class="line">          <span class="attr">entry</span>: <span class="string">&quot;/src/page2/main.js&quot;</span>,</span><br><span class="line">          <span class="attr">filename</span>: <span class="string">&quot;index2.html&quot;</span>,</span><br><span class="line">          <span class="attr">template</span>: <span class="string">&quot;index2.html&quot;</span>,</span><br><span class="line">        &#125;,</span><br><span class="line">      ],</span><br><span class="line">    &#125;),</span><br><span class="line">  ],</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<h1 id="Vite-降级配置"><a href="#Vite-降级配置" class="headerlink" title="Vite 降级配置"></a>Vite 降级配置</h1><p>Vite 默认的引用 js 的方式是 modules 引用，导致必须使用一个 http 服务器打开 html 文件，在有些时候不方便，需要引入使用<a target="_blank" rel="noopener" href="https://www.npmjs.com/package/@vitejs/plugin-legacy">@vitejs&#x2F;plugin-legacy</a>做降级配置。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm i -D @vitejs/plugin-legacy</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; defineConfig &#125; <span class="keyword">from</span> <span class="string">&quot;vite&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> vue <span class="keyword">from</span> <span class="string">&quot;@vitejs/plugin-vue&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> legacy <span class="keyword">from</span> <span class="string">&quot;@vitejs/plugin-legacy&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// https://vitejs.dev/config/</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="title function_">defineConfig</span>(&#123;</span><br><span class="line">  <span class="attr">plugins</span>: [</span><br><span class="line">    <span class="title function_">vue</span>(),</span><br><span class="line">    <span class="title function_">legacy</span>(&#123;</span><br><span class="line">      <span class="attr">targets</span>: [<span class="string">&quot;defaults&quot;</span>, <span class="string">&quot;not IE 11&quot;</span>],</span><br><span class="line">    &#125;),</span><br><span class="line">  ],</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>降级后即可双击打开 html 文件</p>
+<h1 id="Vite-单页面应用"><a href="#Vite-单页面应用" class="headerlink" title="Vite 单页面应用"></a>Vite 单页面应用</h1><p>使用<a target="_blank" rel="noopener" href="https://www.npmjs.com/package/vite-plugin-singlefile">vite-plugin-singlefile</a>做单页面配置</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm i -D vite-plugin-singlefile</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; defineConfig &#125; <span class="keyword">from</span> <span class="string">&quot;vite&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> vue <span class="keyword">from</span> <span class="string">&quot;@vitejs/plugin-vue&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; viteSingleFile &#125; <span class="keyword">from</span> <span class="string">&quot;vite-plugin-singlefile&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="title function_">defineConfig</span>(&#123;</span><br><span class="line">  <span class="attr">plugins</span>: [<span class="title function_">vue</span>(), <span class="title function_">viteSingleFile</span>()],</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>所有的资源将会转换成base64，css和js转为内嵌，不用module的方式引入，所以也可以双击打开。</p>
+
+
+    <!-- 显示photos -->
+    
+
+  </div>
+  <div class="post-tags">
+    <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Vite/" rel="tag">Vite</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Vue/" rel="tag">Vue</a></li></ul>
+  </div>
+</article>
+  
+    <div class="post-nav">
+      <div class="post-nav-item post-nav-next">
+        
+          <a href="/2023/12/24/%E6%90%AD%E5%BB%BAVue3-JSX%E9%A1%B9%E7%9B%AE/" rel="next" title="搭建Vue3+JSX项目">
+            <span>〈 </span> 搭建Vue3+JSX项目
+          </a>
+        
+      </div>
+  
+      <div class="post-nav-item post-nav-prev">
+        
+      </div>
+    </div>
+  
+
+
+  <div id="toc" class="toc-article">
+    <strong class="toc-title">目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Vite-%E5%A4%9A%E9%A1%B5%E9%85%8D%E7%BD%AE"><span class="toc-text">Vite 多页配置</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Vite-%E9%99%8D%E7%BA%A7%E9%85%8D%E7%BD%AE"><span class="toc-text">Vite 降级配置</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Vite-%E5%8D%95%E9%A1%B5%E9%9D%A2%E5%BA%94%E7%94%A8"><span class="toc-text">Vite 单页面应用</span></a></li></ol>
+  </div>
+
+
+    </div>
+
+    
+
+  </div>
+
+  <footer class="footer text-center">
+    <div id="bottom-inner">
+      
+        <a href="http://hexo.io" target="_blank" class="footer-link">Hexo</a>
+      
+        <a href="https://github.com/microacup/hexo-theme-micorb" target="_blank" class="footer-link">Theme microb</a>
+      
+    </div>
+  </footer>
+   <script>
+  (function (window, document) {
+    window.requestAnimationFrame = (function () {
+      return window.requestAnimationFrame ||
+        window.webkitRequestAnimationFrame ||
+        window.mozRequestAnimationFrame ||
+        window.oRequestAnimationFrame ||
+        window.msRequestAnimationFrame ||
+        function (callback) {
+          setTimeout(callback, 1000 / 60);
+        }
+    })();
+
+    function init() {
+      addMenuEvent();
+    }
+    init();
+
+    function addMenuEvent() {
+      var menu = document.getElementById('menu-main-post');
+      if (menu) {
+        var toc = document.getElementById('toc');
+        menu.title = toc ? '目录' : '回到顶部';
+        menu.onclick = function () {
+          if (toc) {
+            if (toc.style.display == 'block') {
+              toc.style.display = 'none';
+            } else {
+              toc.style.display = 'block';
+            }
+          } else {
+            returnTop();
+          }
+        };
+      }
+    }
+
+    var timer = null;
+
+    function returnTop() {
+      cancelAnimationFrame(timer);
+      timer = requestAnimationFrame(function fn() {
+        var oTop = document.body.scrollTop || document.documentElement.scrollTop;
+        if (oTop > 0) {
+          document.body.scrollTop = document.documentElement.scrollTop = oTop - 50;
+          timer = requestAnimationFrame(fn);
+        } else {
+          cancelAnimationFrame(timer);
+        }
+      });
+    }
+
+  })(window, document);
+</script> 
+
+  
+
+
+
+</body>
+</html>
