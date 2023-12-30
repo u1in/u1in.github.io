@@ -1,0 +1,233 @@
+
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="theme-color" content="#202020"/>
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  
+    <meta name="keywords" content="" />
+  
+
+  
+    <meta name="description" content="简要理解Vue3响应式" />
+  
+  
+  <link rel="icon" type="image/x-icon" href="/logo.png">
+  <title>简要理解Vue3响应式u1in</title>
+  
+    <!-- stylesheets list from config.yml -->
+    
+      <link rel="stylesheet" href="//cdn.bootcss.com/pure/1.0.0/pure-min.css">
+    
+      <link rel="stylesheet" href="/css/microb.css">
+    
+  
+<meta name="generator" content="Hexo 7.0.0"></head>
+
+<body>
+  <nav class="home-menu pure-menu pure-menu-horizontal pure-menu-fixed">
+  <ul class="pure-menu-list float-r clearfix">
+    
+      <li class="pure-menu-item toc-menu">
+        <a id="menu-main-post" class="pure-menu-link" href="javascript:;">
+          <img class="menu-icon" src="/logo.png" alt="MENU">
+        </a>
+      </li>
+    
+  </ul>  
+  <a class="pure-menu-heading" href="/">
+      <h1 class="title">u1in</h1>
+      <!-- <span></span> -->
+  </a>
+  <!-- 
+  <img class="logo" id="logo" src="/logo.png" alt="logo">
+   -->
+</nav>
+
+  <div class="container" id="content-outer">
+    <div class="inner" id="content-inner">
+      <article class="post" id="post">
+  <header class="post-header text-center">
+    <h1 class="title">
+      简要理解Vue3响应式
+    </h1>
+    
+    <time class="time" datetime="2023-12-30T14:26:20.000Z">
+      2023-12-30
+    </time>
+    
+    <hr>
+  </header>
+  <div class="post-content">
+    <h1 id="0-前言"><a href="#0-前言" class="headerlink" title="0. 前言"></a>0. 前言</h1><blockquote>
+<p>vue2 即将结束 LTS，一个时代结束。</p>
+</blockquote>
+<p>vue2 到 vue3 的转变有很多，组合式 api，新的响应式，vite，pinia 等。今天简单学习了一下 vue3 的响应式，记录一点简单理解。</p>
+<h1 id="1-Object-defineProperty-和-Proxy"><a href="#1-Object-defineProperty-和-Proxy" class="headerlink" title="1. Object.defineProperty 和 Proxy"></a>1. Object.defineProperty 和 Proxy</h1><p>vue2 使用的 Object.defineProperty 去劫持对象的 getter 和 setter，通过订阅发布模式以实现前端的响应式更新。<br>vue3 使用最新的 API Proxy，劫持对象的 getter 和 setter，通过订阅发布实现前端的响应式。</p>
+<p>为什么要做了这个替换呢，要知道做了这个替换可是下了很大决心的，Proxy 这个新的 API 是没有 Polyfill 的，也就是说 Vue3 将完全无法支持 IE 等不支持 Proxy 的浏览器。</p>
+<p>原因主要有：</p>
+<ol>
+<li>Object.defineProperty 对于深层对象只能循环递归，性能上比 Proxy 低。</li>
+<li>Object.defineProperty 无法监听数组的增删，vue2 之所以能够对一些常用操作做监听例如 push，pop，是因为 vue2 重写了数组方法以触发响应式，对于无法触发响应式的操作，文档也提及了 Vue.$set 方法</li>
+<li>Object.defineProperty 无法监听对象的增删。vue2 中也是只能使用 Vue.$set 方法。</li>
+</ol>
+<p>以上，vue3 决心放弃 Object.defineProperty 转为使用 Proxy</p>
+<h1 id="2-Proxy-如何实现劫持"><a href="#2-Proxy-如何实现劫持" class="headerlink" title="2.Proxy 如何实现劫持"></a>2.Proxy 如何实现劫持</h1><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">作者：artist</span></span><br><span class="line"><span class="comment">链接：https://juejin.cn/post/6995731724365725710</span></span><br><span class="line"><span class="comment">来源：稀土掘金</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">var</span> obj = <span class="keyword">new</span> <span class="title class_">Proxy</span>(</span><br><span class="line">  &#123;&#125;,</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="attr">get</span>: <span class="keyword">function</span> (<span class="params">target, propKey, receiver</span>) &#123;</span><br><span class="line">      <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`getting <span class="subst">$&#123;propKey&#125;</span>!`</span>);</span><br><span class="line">      <span class="keyword">return</span> <span class="title class_">Reflect</span>.<span class="title function_">get</span>(target, propKey, receiver);</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">set</span>: <span class="keyword">function</span> (<span class="params">target, propKey, value, receiver</span>) &#123;</span><br><span class="line">      <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`setting <span class="subst">$&#123;propKey&#125;</span>!`</span>);</span><br><span class="line">      <span class="keyword">return</span> <span class="title class_">Reflect</span>.<span class="title function_">set</span>(target, propKey, value, receiver);</span><br><span class="line">    &#125;,</span><br><span class="line">  &#125;</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<p>引用一段抄来的代码，Proxy 接受一个对象，通过劫持对象的 get 操作和 set 操作，通过反射 Reflect 作用到劫持的对象上。在 get 和 set 中可以实现订阅发布。</p>
+<h1 id="3-Reactive-VS-Ref"><a href="#3-Reactive-VS-Ref" class="headerlink" title="3. Reactive VS Ref"></a>3. Reactive VS Ref</h1><p>刚学 vue3 的时候，会有很多疑惑，在 vue2 里面 this.data.a 直接赋值就行了，为什么 vue3 里面有些需要带.value，有些不需要带.value，有些对象可以直接赋值，有些对象要带.value 赋值等。</p>
+<p>我的理解是：</p>
+<blockquote>
+<p><strong>牢记：Proxy 代理的永远是【对象】</strong></p>
+</blockquote>
+<h2 id="3-1-Reactive"><a href="#3-1-Reactive" class="headerlink" title="3.1 Reactive"></a>3.1 Reactive</h2><p>首先讲一下 reactive，reactive 的功能其实就是上述伪代码的功能，将一个对象转化为响应式对象，类似于</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 伪代码，非具体实现</span></span><br><span class="line"><span class="comment">// reactive将传入的对象使用Proxy劫持，并处理订阅发布</span></span><br><span class="line"><span class="keyword">const</span> <span class="title function_">reactive</span> = (<span class="params">obj</span>) =&gt;</span><br><span class="line">  <span class="keyword">new</span> <span class="title class_">Proxy</span>(obj, &#123;</span><br><span class="line">    <span class="attr">get</span>: <span class="keyword">function</span> (<span class="params">target, propKey, receiver</span>) &#123;</span><br><span class="line">      <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`getting <span class="subst">$&#123;propKey&#125;</span>!`</span>);</span><br><span class="line">      <span class="keyword">return</span> <span class="title class_">Reflect</span>.<span class="title function_">get</span>(target, propKey, receiver);</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">set</span>: <span class="keyword">function</span> (<span class="params">target, propKey, value, receiver</span>) &#123;</span><br><span class="line">      <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`setting <span class="subst">$&#123;propKey&#125;</span>!`</span>);</span><br><span class="line">      <span class="keyword">return</span> <span class="title class_">Reflect</span>.<span class="title function_">set</span>(target, propKey, value, receiver);</span><br><span class="line">    &#125;,</span><br><span class="line">  &#125;);</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> obj = &#123;</span><br><span class="line">  <span class="attr">a</span>: <span class="number">1</span>,</span><br><span class="line">  <span class="attr">b</span>: <span class="number">2</span>,</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> myReactiveObj = <span class="title function_">reactive</span>(obj);</span><br></pre></td></tr></table></figure>
+
+<p>这样子，我们在使用 <code>myReactiveObj.a</code> 的时候，就进入到 Proxy 的劫持了，Proxy 将从劫持的对象中取出数据 1。</p>
+<h2 id="3-2-Ref"><a href="#3-2-Ref" class="headerlink" title="3.2 Ref"></a>3.2 Ref</h2><p>那为什么又存在 ref 呢？许多教程提到过，ref 是用来将原始值（String &#x2F; Number &#x2F; BigInt &#x2F; Boolean &#x2F; Symbol &#x2F; Null &#x2F; Undefined）转为响应式对象的。为什么是原始值呢？</p>
+<p>上文说到过 Proxy 代理的永远是对象，那么原始值我们怎么监听呢？</p>
+<blockquote>
+<p><strong>ref 的做法是，把他放到一个对象里面去就好了。</strong></p>
+</blockquote>
+<p>类似于把传入 ref 的变量变为</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 伪代码，非具体实现</span></span><br><span class="line"><span class="comment">// ref的劫持好像不是用Proxy的</span></span><br><span class="line"><span class="keyword">const</span> <span class="title function_">ref</span> = (<span class="params">value</span>) =&gt;</span><br><span class="line">  <span class="title function_">reactive</span>(&#123;</span><br><span class="line">    value,</span><br><span class="line">  &#125;);</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> a = <span class="number">1</span>;</span><br><span class="line"><span class="keyword">const</span> myRef = <span class="title function_">ref</span>(a);</span><br></pre></td></tr></table></figure>
+
+<p>这样子，其实我们劫持的是对象<code>&#123; value: 1 &#125;</code>，所以我们在使用的时候，并不是使用 myRef，myRef 是一个劫持对象。所以需要使用 myRef.value 才能取到我们想要的数据 1。</p>
+<blockquote>
+<p><strong>转为对象的时候还有一个优势，就是将 ref 作为函数参数传参的时候，使用的是引用传值，可以将响应式传递下去</strong></p>
+</blockquote>
+<h1 id="4-响应式丢失"><a href="#4-响应式丢失" class="headerlink" title="4. 响应式丢失"></a>4. 响应式丢失</h1><p>响应式丢失是什么问题？</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> obj = &#123;</span><br><span class="line">  <span class="attr">a</span>: <span class="number">1</span>,</span><br><span class="line">  <span class="attr">b</span>: <span class="number">2</span>,</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> myReactiveObj = <span class="title function_">reactive</span>(obj);</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> &#123; a, b &#125; = myReactiveObj;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 不会触发视图更新，即丢失了响应式</span></span><br><span class="line">a += <span class="number">1</span>;</span><br></pre></td></tr></table></figure>
+
+<p>为什么会出现这种情况呢？关键还是上面说的</p>
+<blockquote>
+<p><strong>牢记：Proxy 代理的永远是【对象】</strong></p>
+</blockquote>
+<p><code>const &#123; a, b &#125; = myReactiveObj</code> 这一步中，我们对 myReactiveObj 对象中的 a 属性进行了 get 调用，然后把调用的返回值赋予给了新的变量 a。这个返回值，已经是原始值 1（Number）了，对一个原始值再怎么赋值，也跟响应式无关了，因为 Proxy 劫持的是对象，劫持的是<code>obj.a</code>的操作和<code>obj.a += 1</code>的操作。一切都要在劫持对象 obj 的框架下进行。解构之后就与 obj 无关了。</p>
+<p>那么要如何保持响应式的同时使用解构呢？答案是使用 toRefs。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> obj = &#123;</span><br><span class="line">  <span class="attr">a</span>: <span class="number">1</span>,</span><br><span class="line">  <span class="attr">b</span>: <span class="number">2</span>,</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> myReactiveObj = <span class="title function_">reactive</span>(obj);</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> &#123; a, b &#125; = <span class="title function_">toRefs</span>(myReactiveObj);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 会触发视图更新，具有响应式链接</span></span><br><span class="line">a.<span class="property">value</span> += <span class="number">1</span>;</span><br></pre></td></tr></table></figure>
+
+<p>toRefs 使用 ref 对传入的对象的每个 key 进行包裹，建立一个<code>ref(myReactiveObj.a).value</code>和<code>myReactiveObj.a</code>的响应式传递，即</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> obj = &#123;</span><br><span class="line">  <span class="attr">a</span>: <span class="number">1</span>,</span><br><span class="line">  <span class="attr">b</span>: <span class="number">2</span>,</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> myReactiveObj = <span class="title function_">reactive</span>(obj);</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> &#123; a, b &#125; = <span class="title function_">toRefs</span>(myReactiveObj);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 这段等同于 myReactiveObj.a = myReactiveObj.a + 1;</span></span><br><span class="line"><span class="comment">// 视图中使用a.value的地方也会被myReactiveObj.a的赋值触发更新</span></span><br><span class="line">a.<span class="property">value</span> = a.<span class="property">value</span> + <span class="number">1</span>;</span><br></pre></td></tr></table></figure>
+
+<h1 id="5-小测"><a href="#5-小测" class="headerlink" title="5. 小测"></a>5. 小测</h1><p>综上，我们可以轻易得出一下问题的结论</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 无效</span></span><br><span class="line"><span class="keyword">let</span> x = <span class="title function_">reactive</span>(&#123; <span class="attr">name</span>: <span class="string">&quot;John&quot;</span> &#125;);</span><br><span class="line">x = <span class="title function_">reactive</span>(&#123; <span class="attr">todo</span>: <span class="literal">true</span> &#125;);</span><br></pre></td></tr></table></figure>
+
+<p>这段代码响应式无效是因为，x 原本为 Proxy 对象，直接替换 Proxy 对象，无法触发对象属性的劫持，不会触发响应式。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 有效</span></span><br><span class="line"><span class="keyword">const</span> x = <span class="title function_">ref</span>(&#123; <span class="attr">name</span>: <span class="string">&quot;John&quot;</span> &#125;);</span><br><span class="line">x.<span class="property">value</span> = &#123; <span class="attr">todo</span>: <span class="literal">true</span> &#125;;</span><br></pre></td></tr></table></figure>
+
+<p>这段代码有效是因为，x 是 Proxy 对象，对.value 的赋值操作会触发响应式更新。</p>
+
+
+    <!-- 显示photos -->
+    
+
+  </div>
+  <div class="post-tags">
+    
+  </div>
+</article>
+  
+    <div class="post-nav">
+      <div class="post-nav-item post-nav-next">
+        
+          <a href="/2023/12/30/Vite%E7%9A%84%E5%A4%9A%E9%A1%B5%E9%85%8D%E7%BD%AE%E3%80%81%E9%99%8D%E7%BA%A7%E9%85%8D%E7%BD%AE%E3%80%81%E5%8D%95%E6%96%87%E4%BB%B6%E9%85%8D%E7%BD%AE/" rel="next" title="Vite的多页配置、降级配置、单文件配置">
+            <span>〈 </span> Vite的多页配置、降级配置、单文件配置
+          </a>
+        
+      </div>
+  
+      <div class="post-nav-item post-nav-prev">
+        
+      </div>
+    </div>
+  
+
+
+  <div id="toc" class="toc-article">
+    <strong class="toc-title">目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0-%E5%89%8D%E8%A8%80"><span class="toc-text">0. 前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#1-Object-defineProperty-%E5%92%8C-Proxy"><span class="toc-text">1. Object.defineProperty 和 Proxy</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2-Proxy-%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E5%8A%AB%E6%8C%81"><span class="toc-text">2.Proxy 如何实现劫持</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#3-Reactive-VS-Ref"><span class="toc-text">3. Reactive VS Ref</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#3-1-Reactive"><span class="toc-text">3.1 Reactive</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-2-Ref"><span class="toc-text">3.2 Ref</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#4-%E5%93%8D%E5%BA%94%E5%BC%8F%E4%B8%A2%E5%A4%B1"><span class="toc-text">4. 响应式丢失</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#5-%E5%B0%8F%E6%B5%8B"><span class="toc-text">5. 小测</span></a></li></ol>
+  </div>
+
+
+    </div>
+
+    
+
+  </div>
+
+  <footer class="footer text-center">
+    <div id="bottom-inner">
+      
+        <a href="http://hexo.io" target="_blank" class="footer-link">Hexo</a>
+      
+        <a href="https://github.com/microacup/hexo-theme-micorb" target="_blank" class="footer-link">Theme microb</a>
+      
+    </div>
+  </footer>
+   <script>
+  (function (window, document) {
+    window.requestAnimationFrame = (function () {
+      return window.requestAnimationFrame ||
+        window.webkitRequestAnimationFrame ||
+        window.mozRequestAnimationFrame ||
+        window.oRequestAnimationFrame ||
+        window.msRequestAnimationFrame ||
+        function (callback) {
+          setTimeout(callback, 1000 / 60);
+        }
+    })();
+
+    function init() {
+      addMenuEvent();
+    }
+    init();
+
+    function addMenuEvent() {
+      var menu = document.getElementById('menu-main-post');
+      if (menu) {
+        var toc = document.getElementById('toc');
+        menu.title = toc ? '目录' : '回到顶部';
+        menu.onclick = function () {
+          if (toc) {
+            if (toc.style.display == 'block') {
+              toc.style.display = 'none';
+            } else {
+              toc.style.display = 'block';
+            }
+          } else {
+            returnTop();
+          }
+        };
+      }
+    }
+
+    var timer = null;
+
+    function returnTop() {
+      cancelAnimationFrame(timer);
+      timer = requestAnimationFrame(function fn() {
+        var oTop = document.body.scrollTop || document.documentElement.scrollTop;
+        if (oTop > 0) {
+          document.body.scrollTop = document.documentElement.scrollTop = oTop - 50;
+          timer = requestAnimationFrame(fn);
+        } else {
+          cancelAnimationFrame(timer);
+        }
+      });
+    }
+
+  })(window, document);
+</script> 
+
+  
+
+
+
+</body>
+</html>
